@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nfs-web
+spec:
+  replicas: 2
+  selector:
+    role: web-frontend
+  template:
+    metadata:
+      labels:
+        role: web-frontend
+    spec:
+      containers:
+      - name: web
+        image: nginx
+        ports:
+          - name: web
+            containerPort: 80
+            # volumeMounts:
+            #     # name must match the volume name below
+            #     - name: nfs-path
+            #       mountPath: "/usr/share/nginx/html"
+        volumeMounts:
+          - mountPath: "/usr/share/nginx/html"
+            name: nfs
+     # volumes:
+     #    - name: nfs-path
+     #      nfs:  
+     #        server: 10.106.74.31
+     #        path: /exports
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfs-pv-claim
